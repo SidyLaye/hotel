@@ -38,9 +38,10 @@ func ClientsRouter(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	path = strings.TrimPrefix(path, "/clients/")
+
 	id, err := uuid.Parse(path)
 
-	path = strings.TrimPrefix(path, "/clients/")
 	if err != nil {
 		postError(w, http.StatusNotFound)
 		return
