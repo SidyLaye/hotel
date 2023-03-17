@@ -18,7 +18,7 @@ var (
 	dbHost     = os.Getenv("DB_HOST")
 	dbPort     = os.Getenv("DB_PORT")
 	dbName     = os.Getenv("DB_NAME")
-
-	// Create MySQL Path
-	dbPath = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
 )
+
+// Create MySQL Path
+var DbPath = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPassword, dbHost, dbPort, dbName)

@@ -7,8 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/asdine/storm"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func bodyToClient(r *http.Request, c *hotel.Client) error {
@@ -38,10 +38,10 @@ func clientsGetAll(w http.ResponseWriter, r *http.Request) {
 	postBodyResponse(w, http.StatusOK, jsonResponse{"clients": clients})
 }
 
-func clientsGetOne(w http.ResponseWriter, r *http.Request, id bson.ObjectId) {
-	c, err := hotel.One(id)
+func clientsGetOne(w http.ResponseWriter, r *http.Request, tel string) {
+	c, err := hotel.One(tel)
 	if err != nil {
-		if err == storm.ErrNotFound {
+		if err == gorm.ErrRecordNotFound {
 			postError(w, http.StatusNotFound)
 			return
 		}
@@ -62,7 +62,7 @@ func clientsPostOne(w http.ResponseWriter, r *http.Request) {
 		postError(w, http.StatusBadRequest)
 		return
 	}
-	c.ID = bson.NewObjectId()
+	c.Tel = uuid.New().String()
 	err = c.Save()
 	if err != nil {
 		if err == hotel.ErrRecordInvalid {
@@ -72,18 +72,18 @@ func clientsPostOne(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	w.Header().Set("Location", "/clients/"+c.ID.Hex())
+	w.Header().Set("Location", "/clients/"+c.Tel)
 	w.WriteHeader(http.StatusCreated)
 }
 
-func clientsPutOne(w http.ResponseWriter, r *http.Request, id bson.ObjectId) {
+func clientsPutOne(w http.ResponseWriter, r *http.Request, tel string) {
 	c := new(hotel.Client)
 	err := bodyToClient(r, c)
 	if err != nil {
 		postError(w, http.StatusBadRequest)
 		return
 	}
-	c.ID = id
+	c.Tel = uuid.New().String()
 	err = c.Save()
 	if err != nil {
 		if err == hotel.ErrRecordInvalid {
@@ -96,10 +96,10 @@ func clientsPutOne(w http.ResponseWriter, r *http.Request, id bson.ObjectId) {
 	postBodyResponse(w, http.StatusOK, jsonResponse{"client": c})
 }
 
-func clientsPatchOne(w http.ResponseWriter, r *http.Request, id bson.ObjectId) {
-	c, err := hotel.One(id)
+func clientsPatchOne(w http.ResponseWriter, r *http.Request, tel string) {
+	c, err := hotel.One(tel)
 	if err != nil {
-		if err == storm.ErrNotFound {
+		if err == gorm.ErrRecordNotFound {
 			postError(w, http.StatusNotFound)
 			return
 		}
@@ -111,7 +111,7 @@ func clientsPatchOne(w http.ResponseWriter, r *http.Request, id bson.ObjectId) {
 		postError(w, http.StatusBadRequest)
 		return
 	}
-	c.ID = id
+	c.Tel = uuid.New().String()
 	err = c.Save()
 	if err != nil {
 		if err == hotel.ErrRecordInvalid {
@@ -124,10 +124,10 @@ func clientsPatchOne(w http.ResponseWriter, r *http.Request, id bson.ObjectId) {
 	postBodyResponse(w, http.StatusOK, jsonResponse{"client": c})
 }
 
-func clientsDeleteOne(w http.ResponseWriter, _ *http.Request, id bson.ObjectId) {
-	err := hotel.Delete(id)
+func clientsDeleteOne(w http.ResponseWriter, _ *http.Request, tel string) {
+	err := hotel.Delete(tel)
 	if err != nil {
-		if err == storm.ErrNotFound {
+		if err == gorm.ErrRecordNotFound {
 			postError(w, http.StatusNotFound)
 			return
 		}

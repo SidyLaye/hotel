@@ -9,10 +9,9 @@ import (
 
 // Client holds data for a single client
 type Client struct {
-	ID     uint   `json:"id" gorm:"primaryKey"`
+	Tel    string `json:"tel" gorm:"primaryKey"`
 	Nom    string `json:"nom"`
 	Prenom string `json:"prenom"`
-	Tel    string `json:"tel"`
 }
 
 // errors
@@ -22,7 +21,7 @@ var (
 
 // All retrieves all clients from the database
 func All() ([]Client, error) {
-	db, err := gorm.Open(mysql.Open(dbPath), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(DbPath), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -35,13 +34,13 @@ func All() ([]Client, error) {
 }
 
 // One returns a single client record from the database
-func One(id uint) (*Client, error) {
-	db, err := gorm.Open(mysql.Open(dbPath), &gorm.Config{})
+func One(tel string) (*Client, error) {
+	db, err := gorm.Open(mysql.Open(DbPath), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	c := new(Client)
-	err = db.First(c, id).Error
+	err = db.First(c, tel).Error
 	if err != nil {
 		return nil, err
 	}
@@ -49,13 +48,13 @@ func One(id uint) (*Client, error) {
 }
 
 // Delete removes a given record from the database
-func Delete(id uint) error {
-	db, err := gorm.Open(mysql.Open(dbPath), &gorm.Config{})
+func Delete(tel string) error {
+	db, err := gorm.Open(mysql.Open(DbPath), &gorm.Config{})
 	if err != nil {
 		return err
 	}
 	c := new(Client)
-	err = db.First(c, id).Error
+	err = db.First(c, tel).Error
 	if err != nil {
 		return err
 	}
@@ -67,7 +66,7 @@ func (c *Client) Save() error {
 	if err := c.validate(); err != nil {
 		return err
 	}
-	db, err := gorm.Open(mysql.Open(dbPath), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(DbPath), &gorm.Config{})
 	if err != nil {
 		return err
 	}

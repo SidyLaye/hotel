@@ -1,15 +1,20 @@
 package handlers
 
 import (
+	"GoAPIREST/hotel"
 	"fmt"
 	"net/http"
 	"strings"
 
-	"gopkg.in/mgo.v2/bson"
+	"github.com/google/uuid"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 // ClientsRouter handles the clients route
 func ClientsRouter(w http.ResponseWriter, r *http.Request) {
+	db, _ := gorm.Open(mysql.Open(hotel.DbPath), &gorm.Config{})
+	db.AutoMigrate(&hotel.Client{})
 	fmt.Println(r.URL.Path)
 	path := strings.TrimSuffix(r.URL.Path, "/")
 
@@ -33,29 +38,31 @@ func ClientsRouter(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	id, err := uuid.Parse(path)
+
 	path = strings.TrimPrefix(path, "/clients/")
-	if !bson.IsObjectIdHex(path) {
+	if err != nil {
 		postError(w, http.StatusNotFound)
 		return
 	}
 
-	id := bson.ObjectIdHex(path)
+	tel := id.String()
 
 	switch r.Method {
 	case http.MethodGet:
-		clientsGetOne(w, r, id)
+		clientsGetOne(w, r, tel)
 		return
 	case http.MethodPatch:
-		clientsPatchOne(w, r, id)
+		clientsPatchOne(w, r, tel)
 		return
 	case http.MethodPut:
-		clientsPutOne(w, r, id)
+		clientsPutOne(w, r, tel)
 		return
 	case http.MethodDelete:
-		clientsDeleteOne(w, r, id)
+		clientsDeleteOne(w, r, tel)
 		return
 	case http.MethodHead:
-		clientsGetOne(w, r, id)
+		clientsGetOne(w, r, tel)
 	case http.MethodOptions:
 		postOptionsResponse(w, []string{http.MethodGet, http.MethodPatch, http.MethodPut, http.MethodDelete, http.MethodHead, http.MethodOptions}, nil)
 		return
