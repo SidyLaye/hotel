@@ -2,16 +2,19 @@ package hotel
 
 import (
 	"errors"
+	"fmt"
 
+	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 // Client holds data for a single client
 type Client struct {
-	Tel    string `json:"tel" gorm:"primaryKey"`
-	Nom    string `json:"nom"`
-	Prenom string `json:"prenom"`
+	Id     uuid.UUID `json:"id" gorm:"primaryKey"`
+	Nom    string    `json:"nom"`
+	Prenom string    `json:"prenom"`
+	Tel    string    `json:"tel"`
 }
 
 // errors
@@ -19,9 +22,11 @@ var (
 	ErrRecordInvalid = errors.New("record is invalid")
 )
 
+var conf, _ = Conf()
+
 // All retrieves all clients from the database
 func All() ([]Client, error) {
-	db, err := gorm.Open(mysql.Open(DbPath), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.DBUser, conf.DBPass, conf.DBHost, conf.DBPort, conf.DBName)), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -34,8 +39,8 @@ func All() ([]Client, error) {
 }
 
 // One returns a single client record from the database
-func One(tel string) (*Client, error) {
-	db, err := gorm.Open(mysql.Open(DbPath), &gorm.Config{})
+func One(tel uuid.UUID) (*Client, error) {
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.DBUser, conf.DBPass, conf.DBHost, conf.DBPort, conf.DBName)), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -48,8 +53,8 @@ func One(tel string) (*Client, error) {
 }
 
 // Delete removes a given record from the database
-func Delete(tel string) error {
-	db, err := gorm.Open(mysql.Open(DbPath), &gorm.Config{})
+func Delete(tel uuid.UUID) error {
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.DBUser, conf.DBPass, conf.DBHost, conf.DBPort, conf.DBName)), &gorm.Config{})
 	if err != nil {
 		return err
 	}
@@ -66,7 +71,7 @@ func (c *Client) Save() error {
 	if err := c.validate(); err != nil {
 		return err
 	}
-	db, err := gorm.Open(mysql.Open(DbPath), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.DBUser, conf.DBPass, conf.DBHost, conf.DBPort, conf.DBName)), &gorm.Config{})
 	if err != nil {
 		return err
 	}

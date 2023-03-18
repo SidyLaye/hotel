@@ -7,18 +7,30 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const AllowedCORSDomain = "http://localhost:"
+// Config est une structure qui contient les variables d'environnement pour la configuration de la base de données
+type Config struct {
+	DBHost string
+	DBPort string
+	DBUser string
+	DBPass string
+	DBName string
+}
 
-var _ = godotenv.Load(".env")
+func Conf() (*Config, error) {
+	// Charger les variables d'environnement à partir d'un fichier .env
+	err := godotenv.Load(".env")
+	if err != nil {
+		return nil, fmt.Errorf("Impossible de charger le fichier .env : %v", err)
+	}
 
-// Load environment variables
-var (
-	dbUser     = os.Getenv("USER")
-	dbPassword = os.Getenv("PASSWORD")
-	dbHost     = os.Getenv("HOST")
-	dbPort     = os.Getenv("PORT")
-	dbName     = os.Getenv("DB_NAME")
-)
+	// Créer une nouvelle instance de la structure Config avec les variables d'environnement chargées
+	conf := &Config{
+		DBHost: os.Getenv("DB_HOST"),
+		DBPort: os.Getenv("DB_PORT"),
+		DBUser: os.Getenv("DB_USER"),
+		DBPass: os.Getenv("DB_PASS"),
+		DBName: os.Getenv("DB_NAME"),
+	}
 
-// Create MySQL Path
-var DbPath = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
+	return conf, nil
+}

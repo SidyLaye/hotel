@@ -38,8 +38,8 @@ func clientsGetAll(w http.ResponseWriter, r *http.Request) {
 	postBodyResponse(w, http.StatusOK, jsonResponse{"clients": clients})
 }
 
-func clientsGetOne(w http.ResponseWriter, r *http.Request, tel string) {
-	c, err := hotel.One(tel)
+func clientsGetOne(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
+	c, err := hotel.One(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			postError(w, http.StatusNotFound)
@@ -62,7 +62,7 @@ func clientsPostOne(w http.ResponseWriter, r *http.Request) {
 		postError(w, http.StatusBadRequest)
 		return
 	}
-	c.Tel = uuid.New().String()
+	c.Id = uuid.New()
 	err = c.Save()
 	if err != nil {
 		if err == hotel.ErrRecordInvalid {
@@ -72,18 +72,19 @@ func clientsPostOne(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	w.Header().Set("Location", "/clients/"+c.Tel)
+
+	w.Header().Set("Location", "/clients/"+c.Id.String())
 	w.WriteHeader(http.StatusCreated)
 }
 
-func clientsPutOne(w http.ResponseWriter, r *http.Request, tel string) {
+func clientsPutOne(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
 	c := new(hotel.Client)
 	err := bodyToClient(r, c)
 	if err != nil {
 		postError(w, http.StatusBadRequest)
 		return
 	}
-	c.Tel = uuid.New().String()
+	c.Id = uuid.New()
 	err = c.Save()
 	if err != nil {
 		if err == hotel.ErrRecordInvalid {
@@ -96,8 +97,8 @@ func clientsPutOne(w http.ResponseWriter, r *http.Request, tel string) {
 	postBodyResponse(w, http.StatusOK, jsonResponse{"client": c})
 }
 
-func clientsPatchOne(w http.ResponseWriter, r *http.Request, tel string) {
-	c, err := hotel.One(tel)
+func clientsPatchOne(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
+	c, err := hotel.One(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			postError(w, http.StatusNotFound)
@@ -111,7 +112,7 @@ func clientsPatchOne(w http.ResponseWriter, r *http.Request, tel string) {
 		postError(w, http.StatusBadRequest)
 		return
 	}
-	c.Tel = uuid.New().String()
+	c.Id = uuid.New()
 	err = c.Save()
 	if err != nil {
 		if err == hotel.ErrRecordInvalid {
@@ -124,8 +125,8 @@ func clientsPatchOne(w http.ResponseWriter, r *http.Request, tel string) {
 	postBodyResponse(w, http.StatusOK, jsonResponse{"client": c})
 }
 
-func clientsDeleteOne(w http.ResponseWriter, _ *http.Request, tel string) {
-	err := hotel.Delete(tel)
+func clientsDeleteOne(w http.ResponseWriter, _ *http.Request, id uuid.UUID) {
+	err := hotel.Delete(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			postError(w, http.StatusNotFound)

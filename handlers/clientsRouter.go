@@ -1,20 +1,16 @@
 package handlers
 
 import (
-	"GoAPIREST/hotel"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/google/uuid"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 // ClientsRouter handles the clients route
 func ClientsRouter(w http.ResponseWriter, r *http.Request) {
-	db, _ := gorm.Open(mysql.Open(hotel.DbPath), &gorm.Config{})
-	db.AutoMigrate(&hotel.Client{})
+
 	fmt.Println(r.URL.Path)
 	path := strings.TrimSuffix(r.URL.Path, "/")
 
@@ -47,23 +43,21 @@ func ClientsRouter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tel := id.String()
-
 	switch r.Method {
 	case http.MethodGet:
-		clientsGetOne(w, r, tel)
+		clientsGetOne(w, r, id)
 		return
 	case http.MethodPatch:
-		clientsPatchOne(w, r, tel)
+		clientsPatchOne(w, r, id)
 		return
 	case http.MethodPut:
-		clientsPutOne(w, r, tel)
+		clientsPutOne(w, r, id)
 		return
 	case http.MethodDelete:
-		clientsDeleteOne(w, r, tel)
+		clientsDeleteOne(w, r, id)
 		return
 	case http.MethodHead:
-		clientsGetOne(w, r, tel)
+		clientsGetOne(w, r, id)
 	case http.MethodOptions:
 		postOptionsResponse(w, []string{http.MethodGet, http.MethodPatch, http.MethodPut, http.MethodDelete, http.MethodHead, http.MethodOptions}, nil)
 		return
