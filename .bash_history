@@ -215,3 +215,7 @@ python3 accueil.py
 python3 hotel.py
 python3 chambre.py
 python3 hotel.py
+ls
+python3 chambre.py
+python3 chambre.py
+python3 chambre.py
