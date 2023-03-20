@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/clients", handlers.ClientsRouter)
-	http.HandleFunc("/clients/", handlers.ClientsRouter)
+	http.HandleFunc("/users", handlers.UsersRouter)
+	http.HandleFunc("/users/", handlers.UsersRouter)
+	http.HandleFunc("/reservations", handlers.ReservationsRouter)
+	http.HandleFunc("/reservations/", handlers.ReservationsRouter)
 	http.HandleFunc("/", handlers.RootHandler)
 	err := http.ListenAndServe("localhost:11111", nil)
 	if err != nil {

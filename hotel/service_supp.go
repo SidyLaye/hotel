@@ -11,10 +11,10 @@ import (
 
 // Client holds data for a single client
 type Client struct {
-	Id     uuid.UUID `json:"id" gorm:"primaryKey"`
-	Nom    string    `json:"nom"`
-	Prenom string    `json:"prenom"`
-	Tel    string    `json:"tel"`
+	Id_client uuid.UUID `json:"id" gorm:"primaryKey"`
+	Nom       string    `json:"nom"`
+	Prenom    string    `json:"prenom"`
+	Tel       string    `json:"tel"`
 }
 
 // errors
