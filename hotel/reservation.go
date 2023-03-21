@@ -11,16 +11,16 @@ import (
 
 // Reservation holds data for a single Reservation
 type Reservation struct {
-	Id_reservation   uuid.UUID `json:"id" gorm:"primaryKey"`
+	Id_reservation   uuid.UUID `json:"id_reservation" gorm:"primaryKey"`
 	Nom              string    `json:"nom"`
 	Prenom           string    `json:"prenom"`
-	Date_reservation string    `json:"date_reservation" gorm:"type:date"`
-	Date_entree      string    `json:"date_entree" gorm:"type:date"`
-	Date_sortie      string    `json:"date_sortie" gorm:"type:date"`
-	Bar              bool      `json:"bar"`
-	Petit_dej        bool      `json:"petit_dej"`
-	Phone            bool      `json:"phone"`
-	Nuite            int       `json:"nuite"`
+	Date_reservation string    `json:"date_reservation,omitempty" gorm:"type:date"`
+	Date_entree      string    `json:"date_entree,omitempty" gorm:"type:date"`
+	Date_sortie      string    `json:"date_sortie,omitempty" gorm:"type:date"`
+	Bar              bool      `json:"bar,omitempty"`
+	Petit_dej        bool      `json:"petit_dej,omitempty"`
+	Phone            bool      `json:"phone,omitempty"`
+	Nuite            int       `json:"nuite,omitempty"`
 }
 
 // errors
@@ -37,7 +37,7 @@ func All_reservations() ([]Reservation, error) {
 		return nil, err
 	}
 	var reservations []Reservation
-	err = db.Find(&reservations).Error
+	err = db.Select("id_reservation, nom, prenom").Find(&reservations).Error
 	if err != nil {
 		return nil, err
 	}
@@ -45,13 +45,13 @@ func All_reservations() ([]Reservation, error) {
 }
 
 // One returns a single Reservation record from the database
-func One_reservation(id uuid.UUID) (*Reservation, error) {
+func One_reservation(id_reservation uuid.UUID) (*Reservation, error) {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_reservation.DBUser, conf_reservation.DBPass, conf_reservation.DBHost, conf_reservation.DBPort, conf_reservation.DBName)), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	r := new(Reservation)
-	err = db.First(r, id).Error
+	err = db.First(r, id_reservation).Error
 	if err != nil {
 		return nil, err
 	}
@@ -59,13 +59,13 @@ func One_reservation(id uuid.UUID) (*Reservation, error) {
 }
 
 // Delete removes a given record from the database
-func Delete_reservation(id uuid.UUID) error {
+func Delete_reservation(id_reservation uuid.UUID) error {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_reservation.DBUser, conf_reservation.DBPass, conf_reservation.DBHost, conf_reservation.DBPort, conf_reservation.DBName)), &gorm.Config{})
 	if err != nil {
 		return err
 	}
 	r := new(Reservation)
-	err = db.First(r, id).Error
+	err = db.First(r, id_reservation).Error
 	if err != nil {
 		return err
 	}

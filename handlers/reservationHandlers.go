@@ -38,8 +38,8 @@ func reservationsGetAll(w http.ResponseWriter, r *http.Request) {
 	postBodyResponse(w, http.StatusOK, jsonResponse{"reservations": reservations})
 }
 
-func reservationsGetOne(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
-	res, err := hotel.One_reservation(id)
+func reservationsGetOne(w http.ResponseWriter, r *http.Request, id_reservation uuid.UUID) {
+	res, err := hotel.One_reservation(id_reservation)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			postError(w, http.StatusNotFound)
@@ -97,8 +97,8 @@ func reservationsPutOne(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
 	postBodyResponse(w, http.StatusOK, jsonResponse{"Reservation": res})
 }
 
-func reservationsPatchOne(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
-	res, err := hotel.One_reservation(id)
+func reservationsPatchOne(w http.ResponseWriter, r *http.Request, id_reservation uuid.UUID) {
+	res, err := hotel.One_reservation(id_reservation)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			postError(w, http.StatusNotFound)
@@ -125,8 +125,8 @@ func reservationsPatchOne(w http.ResponseWriter, r *http.Request, id uuid.UUID) 
 	postBodyResponse(w, http.StatusOK, jsonResponse{"Reservation": res})
 }
 
-func reservationsDeleteOne(w http.ResponseWriter, _ *http.Request, id uuid.UUID) {
-	err := hotel.Delete_reservation(id)
+func reservationsDeleteOne(w http.ResponseWriter, _ *http.Request, id_reservation uuid.UUID) {
+	err := hotel.Delete_reservation(id_reservation)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			postError(w, http.StatusNotFound)
