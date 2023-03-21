@@ -11,21 +11,17 @@ import (
 
 // Facture holds data for a single Facture
 type Facture struct {
-	Id_facture      uuid.UUID   `json:"id_facture" gorm:"primaryKey"`
-	Id_reservation  uuid.UUID   `json:"id_reservation"`
-	Id_fourniture   uuid.UUID   `json:"id_fourniture"`
-	Id_service_supp uuid.UUID   `json:"id_service_supp"`
-	Id_info_hotel   uuid.UUID   `json:"id_info_hoid"`
-	Reservation     Reservation `json:"reservation"`
-	Fourniture      Fourniture  `json:"fourniture"`
-	Info_hoid       Info_hotel  `json:"info_hoid"`
-	Tarif_chambre   uint        `json:"tarif_chambre"`
-	Tarif_bar       uint        `json:"tarif_bar"`
-	Tarif_petit_dej uint        `json:"tarif_petit_dej"`
-	Tarif_phone     uint        `json:"tarif_phone"`
-	Tarif_special   uint        `json:"tarif_special"`
-	Dedomm_fourn    bool        `json:"dedomm_fourn"`
-	Total           uint        `json:"total"`
+	Id_facture      uuid.UUID    `json:"id_facture" gorm:"primaryKey"`
+	Id_reservation  uuid.UUID    `gorm:"index"`
+	Reservation     Reservation  `json:"reservation" gorm:"foreignKey:Id_reservation"`
+	Id_service_supp Nomss        `gorm:"index"`
+	Service_supp    Service_supp `json:"service_supp" gorm:"foreignKey:nom"`
+	Tarif_chambre   uint         `json:"tarif_chambre"`
+	Tarif_bar       uint         `json:"tarif_bar"`
+	Tarif_petit_dej uint         `json:"tarif_petit_dej"`
+	Tarif_phone     uint         `json:"tarif_phone"`
+	Tarif_special   uint         `json:"tarif_special"`
+	Total           uint         `json:"total"`
 }
 
 // errors

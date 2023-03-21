@@ -13,18 +13,18 @@ import (
 	"gorm.io/gorm"
 )
 
-func bodyToUser(r *http.Request, res *hotel.User) error {
+func bodyToUser(r *http.Request, u *hotel.User) error {
 	if r.Body == nil {
 		return errors.New("request body is emty")
 	}
-	if res == nil {
+	if u == nil {
 		return errors.New("a User is required")
 	}
 	bd, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal(bd, res)
+	return json.Unmarshal(bd, u)
 }
 
 func usersGetAll(w http.ResponseWriter, r *http.Request) {

@@ -17,22 +17,12 @@ const (
 	Reserve Etat = "reserve"
 )
 
-type Classe string
-
-const (
-	Economie Classe = "Economie"
-	Standing Classe = "Standing"
-	Affaire  Classe = "Affaire"
-)
-
 // Chambre holds data for a single Chambre
 type Chambre struct {
-	Id_chambre     uuid.UUID `json:"id_chambre" gorm:"primaryKey"`
-	Id_categorie   uuid.UUID `json:"id_categorie"`
-	Id_reservation uuid.UUID `json:"id_reservation"`
-	Num_chambre    string    `json:"num_chambre"`
-	Etat           Etat      `json:"etat"`
-	Classe         Classe    `json:"classe"`
+	Num_chambre    int       `json:"num_chambre" gorm:"primaryKey"`
+	Nom_categorie  Nom       `json:"nom_categorie,omitempty" gorm:"type:enum('Economique','Standing','Affaire')"`
+	Id_reservation uuid.UUID `json:"-"`
+	Etat           Etat      `json:"etat,omitempty" gorm:"type:enum('libre','occupe','reserve')"`
 }
 
 // errors
@@ -49,7 +39,7 @@ func All_chambres() ([]Chambre, error) {
 		return nil, err
 	}
 	var chambres []Chambre
-	err = db.Find(&chambres).Error
+	err = db.Select("num_chambre").Find(&chambres).Error
 	if err != nil {
 		return nil, err
 	}
@@ -57,13 +47,13 @@ func All_chambres() ([]Chambre, error) {
 }
 
 // One returns a single Chambre record from the database
-func One_chambre(id uuid.UUID) (*Chambre, error) {
+func One_chambre(num_chambre int) (*Chambre, error) {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_chambre.DBUser, conf_chambre.DBPass, conf_chambre.DBHost, conf_chambre.DBPort, conf_chambre.DBName)), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	c := new(Chambre)
-	err = db.First(c, id).Error
+	err = db.Select("num_chambre, nom_categorie, etat").First(c, num_chambre).Error
 	if err != nil {
 		return nil, err
 	}
@@ -71,13 +61,13 @@ func One_chambre(id uuid.UUID) (*Chambre, error) {
 }
 
 // Delete removes a given record from the database
-func Delete_chambre(id uuid.UUID) error {
+func Delete_chambre(num_chambre int) error {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_chambre.DBUser, conf_chambre.DBPass, conf_chambre.DBHost, conf_chambre.DBPort, conf_chambre.DBName)), &gorm.Config{})
 	if err != nil {
 		return err
 	}
 	c := new(Chambre)
-	err = db.First(c, id).Error
+	err = db.First(c, num_chambre).Error
 	if err != nil {
 		return err
 	}
@@ -98,8 +88,8 @@ func (c *Chambre) Save_chambre() error {
 
 // validate make sure that the record contains valid data
 func (c *Chambre) validate_chambre() error {
-	if c.Num_chambre == "" {
-		return ErrRecordInvalid
-	}
+	//if c.Num_chambre == 0 {
+	//	return ErrRecordInvalid
+	//}
 	return nil
 }

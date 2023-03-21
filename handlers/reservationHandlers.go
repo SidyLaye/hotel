@@ -4,10 +4,12 @@ import (
 	"GoAPIREST/hotel"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
 	"github.com/google/uuid"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -61,6 +63,19 @@ func reservationsPostOne(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		postError(w, http.StatusBadRequest)
 		return
+	}
+	ch := new(hotel.Chambre)
+	var conf_chambre, _ = hotel.Conf()
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_chambre.DBUser, conf_chambre.DBPass, conf_chambre.DBHost, conf_chambre.DBPort, conf_chambre.DBName)), &gorm.Config{})
+	if err != nil {
+		return
+	}
+	err = db.Where("num_chambre = ?", res.Num_chambre).First(&ch).Error
+	if err == nil {
+		if ch.Etat != hotel.Libre {
+			postError(w, http.StatusPreconditionFailed)
+			return
+		}
 	}
 	res.Id_reservation = uuid.New()
 	entree, _ := hotel.ParseMysqlDate(res.Date_entree)

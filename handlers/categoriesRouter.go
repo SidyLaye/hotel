@@ -6,35 +6,34 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-var conf_info_hotel, _ = hotel.Conf()
+var conf_categorie, _ = hotel.Conf()
 
-// infos_hotelRouter handles the infos_hotel route
-func Infos_hotelRouter(w http.ResponseWriter, r *http.Request) {
+// categoriesRouter handles the categories route
+func CategoriesRouter(w http.ResponseWriter, r *http.Request) {
 
-	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_info_hotel.DBUser, conf_info_hotel.DBPass, conf_info_hotel.DBHost, conf_info_hotel.DBPort, conf_info_hotel.DBName)), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_categorie.DBUser, conf_categorie.DBPass, conf_categorie.DBHost, conf_categorie.DBPort, conf_categorie.DBName)), &gorm.Config{})
 	if err != nil {
 		return
 	}
-	db.AutoMigrate(&hotel.Info_hotel{})
+	db.AutoMigrate(&hotel.Categorie{})
 
 	fmt.Println(r.URL.Path)
 	path := strings.TrimSuffix(r.URL.Path, "/")
 
-	if path == "/infos_hotel" {
+	if path == "/categories" {
 		switch r.Method {
 		case http.MethodGet:
-			infos_hotelGetAll(w, r)
+			categoriesGetAll(w, r)
 			return
 		case http.MethodPost:
-			infos_hotelPostOne(w, r)
+			categoriesPostOne(w, r)
 			return
 		case http.MethodHead:
-			infos_hotelGetAll(w, r)
+			categoriesGetAll(w, r)
 			return
 		case http.MethodOptions:
 			postOptionsResponse(w, []string{http.MethodGet, http.MethodPost, http.MethodHead, http.MethodOptions}, nil)
@@ -45,9 +44,8 @@ func Infos_hotelRouter(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	path = strings.TrimPrefix(path, "/infos_hotel/")
-
-	id, err := uuid.Parse(path)
+	path = strings.TrimPrefix(path, "/categories/")
+	nom := hotel.Nom(path)
 
 	if err != nil {
 		postError(w, http.StatusNotFound)
@@ -55,15 +53,20 @@ func Infos_hotelRouter(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.Method {
-	case http.MethodPost:
-		infos_hotelGetAll(w, r)
+	case http.MethodGet:
+		categoriesGetOne(w, r, nom)
 		return
 	case http.MethodPatch:
-		infos_hotelPatchOne(w, r, id)
+		categoriesPatchOne(w, r, nom)
+		return
+	case http.MethodPut:
+		categoriesPutOne(w, r, nom)
 		return
 	case http.MethodDelete:
-		infos_hotelDeleteOne(w, r, id)
+		categoriesDeleteOne(w, r, nom)
 		return
+	case http.MethodHead:
+		categoriesGetOne(w, r, nom)
 	case http.MethodOptions:
 		postOptionsResponse(w, []string{http.MethodGet, http.MethodPatch, http.MethodPut, http.MethodDelete, http.MethodHead, http.MethodOptions}, nil)
 		return

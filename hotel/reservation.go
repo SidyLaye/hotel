@@ -22,6 +22,7 @@ type Reservation struct {
 	Petit_dej        bool      `json:"petit_dej,omitempty"`
 	Phone            bool      `json:"phone,omitempty"`
 	Nuite            int       `json:"nuite,omitempty"`
+	Num_chambre      int       `json:"num_chambre,omitempty"`
 }
 
 // errors

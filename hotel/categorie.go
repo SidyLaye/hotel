@@ -4,17 +4,23 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
+type Nom string
+
+const (
+	Economie Nom = "Economique"
+	Standing Nom = "Standing"
+	Affaire  Nom = "Affaire"
+)
+
 // Categorie holds data for a single Categorie
 type Categorie struct {
-	Id_categorie  uuid.UUID `json:"id" gorm:"primaryKey"`
-	Nom           string    `json:"nom"`
-	Tarif_normal  uint      `json:"tarif_normal"`
-	Tarif_special uint      `json:"tarif_special"`
+	Nom           Nom  `json:"nom" gorm:"type:enum('Economique','Standing','Affaire');primaryKey"`
+	Tarif_normal  uint `json:"tarif_normal"`
+	Tarif_special uint `json:"tarif_special,omitempty"`
 }
 
 // errors
@@ -39,13 +45,13 @@ func All_categories() ([]Categorie, error) {
 }
 
 // One returns a single Categorie record from the database
-func One_categorie(id uuid.UUID) (*Categorie, error) {
+func One_categorie(nom Nom) (*Categorie, error) {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_categorie.DBUser, conf_categorie.DBPass, conf_categorie.DBHost, conf_categorie.DBPort, conf_categorie.DBName)), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	c := new(Categorie)
-	err = db.First(c, id).Error
+	err = db.First(c, nom).Error
 	if err != nil {
 		return nil, err
 	}
@@ -53,13 +59,13 @@ func One_categorie(id uuid.UUID) (*Categorie, error) {
 }
 
 // Delete removes a given record from the database
-func Delete_categorie(id uuid.UUID) error {
+func Delete_categorie(nom Nom) error {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_categorie.DBUser, conf_categorie.DBPass, conf_categorie.DBHost, conf_categorie.DBPort, conf_categorie.DBName)), &gorm.Config{})
 	if err != nil {
 		return err
 	}
 	c := new(Categorie)
-	err = db.First(c, id).Error
+	err = db.First(c, nom).Error
 	if err != nil {
 		return err
 	}

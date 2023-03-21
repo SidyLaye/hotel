@@ -13,7 +13,7 @@ import (
 type Info_hotel struct {
 	Id_info_hotel   uuid.UUID `json:"id_info_hotel" gorm:"primaryKey"`
 	Nom_hotel       string    `json:"nom"`
-	Date_debut      string    `json:"date_debut" gorm:"type:date"`
+	Date_debut      string    `json:"date_debut,omitempty" gorm:"type:date;default:NULL"`
 	Nombre_chambres int       `json:"nombre_chambres"`
 	Nombre_niveaux  int       `json:"nombre_niveaux"`
 	Tel_hotel       string    `json:"tel_hotel"`
@@ -33,7 +33,7 @@ func All_info_hotel() ([]Info_hotel, error) {
 		return nil, err
 	}
 	var infos_hotel []Info_hotel
-	err = db.Find(&infos_hotel).Error
+	err = db.Select("nom").Find(&infos_hotel).Error
 	if err != nil {
 		return nil, err
 	}

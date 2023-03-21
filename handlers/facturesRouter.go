@@ -11,30 +11,30 @@ import (
 	"gorm.io/gorm"
 )
 
-var conf_info_hotel, _ = hotel.Conf()
+var conf_facture, _ = hotel.Conf()
 
-// infos_hotelRouter handles the infos_hotel route
-func Infos_hotelRouter(w http.ResponseWriter, r *http.Request) {
+// facturesRouter handles the factures route
+func FacturesRouter(w http.ResponseWriter, r *http.Request) {
 
-	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_info_hotel.DBUser, conf_info_hotel.DBPass, conf_info_hotel.DBHost, conf_info_hotel.DBPort, conf_info_hotel.DBName)), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_facture.DBUser, conf_facture.DBPass, conf_facture.DBHost, conf_facture.DBPort, conf_facture.DBName)), &gorm.Config{})
 	if err != nil {
 		return
 	}
-	db.AutoMigrate(&hotel.Info_hotel{})
+	db.AutoMigrate(&hotel.Facture{})
 
 	fmt.Println(r.URL.Path)
 	path := strings.TrimSuffix(r.URL.Path, "/")
 
-	if path == "/infos_hotel" {
+	if path == "/factures" {
 		switch r.Method {
 		case http.MethodGet:
-			infos_hotelGetAll(w, r)
+			facturesGetAll(w, r)
 			return
 		case http.MethodPost:
-			infos_hotelPostOne(w, r)
+			facturesPostOne(w, r)
 			return
 		case http.MethodHead:
-			infos_hotelGetAll(w, r)
+			facturesGetAll(w, r)
 			return
 		case http.MethodOptions:
 			postOptionsResponse(w, []string{http.MethodGet, http.MethodPost, http.MethodHead, http.MethodOptions}, nil)
@@ -45,7 +45,7 @@ func Infos_hotelRouter(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	path = strings.TrimPrefix(path, "/infos_hotel/")
+	path = strings.TrimPrefix(path, "/factures/")
 
 	id, err := uuid.Parse(path)
 
@@ -55,15 +55,20 @@ func Infos_hotelRouter(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.Method {
-	case http.MethodPost:
-		infos_hotelGetAll(w, r)
+	case http.MethodGet:
+		facturesGetOne(w, r, id)
 		return
 	case http.MethodPatch:
-		infos_hotelPatchOne(w, r, id)
+		facturesPatchOne(w, r, id)
+		return
+	case http.MethodPut:
+		facturesPutOne(w, r, id)
 		return
 	case http.MethodDelete:
-		infos_hotelDeleteOne(w, r, id)
+		facturesDeleteOne(w, r, id)
 		return
+	case http.MethodHead:
+		facturesGetOne(w, r, id)
 	case http.MethodOptions:
 		postOptionsResponse(w, []string{http.MethodGet, http.MethodPatch, http.MethodPut, http.MethodDelete, http.MethodHead, http.MethodOptions}, nil)
 		return
