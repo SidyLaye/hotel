@@ -12,9 +12,9 @@ import (
 // Facture holds data for a single Facture
 type Facture struct {
 	Id_facture      uuid.UUID    `json:"id_facture" gorm:"primaryKey"`
-	Id_reservation  uuid.UUID    `gorm:"index"`
+	Id_reservation  uuid.UUID    `json:"id_reservation" gorm:"index"`
 	Reservation     Reservation  `json:"reservation" gorm:"foreignKey:Id_reservation"`
-	Id_service_supp Nomss        `gorm:"index"`
+	Id_service_supp Nomss        `json:"id_service_supp" gorm:"index"`
 	Service_supp    Service_supp `json:"service_supp" gorm:"foreignKey:nom"`
 	Tarif_chambre   uint         `json:"tarif_chambre"`
 	Tarif_bar       uint         `json:"tarif_bar"`
@@ -56,6 +56,10 @@ func One_facture(id uuid.UUID) (*Facture, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = db.Preload("Service_supp").Find(&c).Error
+	if err != nil {
+		return nil, err
+	}
 	return c, nil
 }
 
@@ -82,6 +86,12 @@ func (c *Facture) Save_facture() error {
 	if err != nil {
 		return err
 	}
+	var r Reservation
+	var s Service_supp
+	_ = db.First(r, c.Id_reservation)
+	_ = db.First(s, c.Id_service_supp)
+	_ = db.Preload("Reservation").Where("id_reservation = ? ", r.Id_reservation)
+	_ = db.Preload("Service_supp").Where(" id_service_supp = ?", s.Nom)
 	return db.Save(c).Error
 }
 
