@@ -63,6 +63,9 @@ func reservationsPostOne(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	res.Id_reservation = uuid.New()
+	entree, _ := hotel.ParseMysqlDate(res.Date_entree)
+	sortie, _ := hotel.ParseMysqlDate(res.Date_sortie)
+	res.Nuite = hotel.Nightsbeetween(sortie, entree)
 	err = res.Save_reservation()
 	if err != nil {
 		if err == hotel.ErrRecordInvalid {
@@ -75,26 +78,6 @@ func reservationsPostOne(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Loresation", "/reservations/"+res.Id_reservation.String())
 	w.WriteHeader(http.StatusCreated)
-}
-
-func reservationsPutOne(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
-	res := new(hotel.Reservation)
-	err := bodyToReservation(r, res)
-	if err != nil {
-		postError(w, http.StatusBadRequest)
-		return
-	}
-	res.Id_reservation = uuid.New()
-	err = res.Save_reservation()
-	if err != nil {
-		if err == hotel.ErrRecordInvalid {
-			postError(w, http.StatusBadRequest)
-		} else {
-			postError(w, http.StatusInternalServerError)
-		}
-		return
-	}
-	postBodyResponse(w, http.StatusOK, jsonResponse{"Reservation": res})
 }
 
 func reservationsPatchOne(w http.ResponseWriter, r *http.Request, id_reservation uuid.UUID) {
@@ -113,6 +96,9 @@ func reservationsPatchOne(w http.ResponseWriter, r *http.Request, id_reservation
 		return
 	}
 	res.Id_reservation = uuid.New()
+	entree, _ := hotel.ParseMysqlDate(res.Date_entree)
+	sortie, _ := hotel.ParseMysqlDate(res.Date_sortie)
+	res.Nuite = hotel.Nightsbeetween(sortie, entree)
 	err = res.Save_reservation()
 	if err != nil {
 		if err == hotel.ErrRecordInvalid {

@@ -61,9 +61,6 @@ func ReservationsRouter(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPatch:
 		reservationsPatchOne(w, r, id)
 		return
-	case http.MethodPut:
-		reservationsPutOne(w, r, id)
-		return
 	case http.MethodDelete:
 		reservationsDeleteOne(w, r, id)
 		return

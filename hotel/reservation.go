@@ -3,6 +3,7 @@ package hotel
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
@@ -84,10 +85,23 @@ func (r *Reservation) Save_reservation() error {
 	return db.Save(r).Error
 }
 
+func ParseMysqlDate(mysqlDate string) (time.Time, error) {
+	return time.Parse("2006-01-02", mysqlDate)
+}
+
 // validate make sure that the record contains valid data
 func (r *Reservation) validate_reservation() error {
-	if r.Nom == "" {
+	entree, _ := ParseMysqlDate(r.Date_entree)
+	sortie, _ := ParseMysqlDate(r.Date_sortie)
+	reserv, _ := ParseMysqlDate(r.Date_reservation)
+	if r.Nom == "" || r.Prenom == "" || entree.After(sortie) || entree.Before(reserv) {
 		return ErrRecordInvalid
 	}
 	return nil
+}
+
+func Nightsbeetween(sortie, entree time.Time) int {
+	duration := sortie.Sub(entree)
+	nights := int(duration.Hours() / 24)
+	return nights
 }
