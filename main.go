@@ -8,6 +8,8 @@ import (
 )
 
 func main() {
+	http.HandleFunc("/infos_hotel", handlers.Infos_hotelRouter)
+	http.HandleFunc("/infos_hotel/", handlers.Infos_hotelRouter)
 	http.HandleFunc("/fournitures", handlers.FournituresRouter)
 	http.HandleFunc("/fournitures/", handlers.FournituresRouter)
 	http.HandleFunc("/users", handlers.UsersRouter)

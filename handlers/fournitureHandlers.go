@@ -11,18 +11,18 @@ import (
 	"gorm.io/gorm"
 )
 
-func bodyToFourniture(r *http.Request, c *hotel.Fourniture) error {
+func bodyToFourniture(r *http.Request, f *hotel.Fourniture) error {
 	if r.Body == nil {
 		return errors.New("request body is emty")
 	}
-	if c == nil {
+	if f == nil {
 		return errors.New("a user is required")
 	}
 	bd, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal(bd, c)
+	return json.Unmarshal(bd, f)
 }
 
 func fournituresGetAll(w http.ResponseWriter, r *http.Request) {

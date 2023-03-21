@@ -3,7 +3,6 @@ package hotel
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
@@ -14,7 +13,7 @@ import (
 type Info_hotel struct {
 	Id_info_hotel   uuid.UUID `json:"id_info_hotel" gorm:"primaryKey"`
 	Nom_hotel       string    `json:"nom"`
-	Date_debut      time.Time `json:"date_debut" gorm:"type:date"`
+	Date_debut      string    `json:"date_debut" gorm:"type:date"`
 	Nombre_chambres int       `json:"nombre_chambres"`
 	Nombre_niveaux  int       `json:"nombre_niveaux"`
 	Tel_hotel       string    `json:"tel_hotel"`
@@ -41,28 +40,14 @@ func All_info_hotel() ([]Info_hotel, error) {
 	return infos_hotel, nil
 }
 
-// One returns a single Info_hotel record from the database
-func One_info_hotel(id uuid.UUID) (*Info_hotel, error) {
-	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_info_hotel.DBUser, conf_info_hotel.DBPass, conf_info_hotel.DBHost, conf_info_hotel.DBPort, conf_info_hotel.DBName)), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-	i := new(Info_hotel)
-	err = db.First(i, id).Error
-	if err != nil {
-		return nil, err
-	}
-	return i, nil
-}
-
 // Delete removes a given record from the database
-func Delete_info_hotel(id uuid.UUID) error {
+func Delete_info_hotel(id_info_hotel uuid.UUID) error {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_info_hotel.DBUser, conf_info_hotel.DBPass, conf_info_hotel.DBHost, conf_info_hotel.DBPort, conf_info_hotel.DBName)), &gorm.Config{})
 	if err != nil {
 		return err
 	}
 	i := new(Info_hotel)
-	err = db.First(i, id).Error
+	err = db.Where("id_info_hotel = ?", id_info_hotel).First(i).Error
 	if err != nil {
 		return err
 	}
