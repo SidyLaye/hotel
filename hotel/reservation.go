@@ -15,7 +15,7 @@ type Reservation struct {
 	Id_reservation   uuid.UUID `json:"id_reservation" gorm:"primaryKey"`
 	Nom              string    `json:"nom"`
 	Prenom           string    `json:"prenom"`
-	Date_reservation string    `json:"date_reservation,omitempty" gorm:"type:date"`
+	Date_reservation string    `json:"date_reservation,omitempty" gorm:"type:date;default:NULL"`
 	Date_entree      string    `json:"date_entree,omitempty" gorm:"type:date"`
 	Date_sortie      string    `json:"date_sortie,omitempty" gorm:"type:date"`
 	Bar              bool      `json:"bar,omitempty"`

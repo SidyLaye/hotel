@@ -38,13 +38,13 @@ func All_fournitures() ([]Fourniture, error) {
 }
 
 // One returns a single Fourniture record from the database
-func One_fourniture(id uuid.UUID) (*Fourniture, error) {
+func One_fourniture(id_fourniture uuid.UUID) (*Fourniture, error) {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_fourniture.DBUser, conf_fourniture.DBPass, conf_fourniture.DBHost, conf_fourniture.DBPort, conf_fourniture.DBName)), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	f := new(Fourniture)
-	err = db.First(f, id).Error
+	err = db.Where("id_fourniture = ?", id_fourniture).First(f).Error
 	if err != nil {
 		return nil, err
 	}
@@ -52,13 +52,13 @@ func One_fourniture(id uuid.UUID) (*Fourniture, error) {
 }
 
 // Delete removes a given record from the database
-func Delete_fourniture(id uuid.UUID) error {
+func Delete_fourniture(id_fourniture uuid.UUID) error {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf_fourniture.DBUser, conf_fourniture.DBPass, conf_fourniture.DBHost, conf_fourniture.DBPort, conf_fourniture.DBName)), &gorm.Config{})
 	if err != nil {
 		return err
 	}
 	f := new(Fourniture)
-	err = db.First(f, id).Error
+	err = db.First(f, id_fourniture).Error
 	if err != nil {
 		return err
 	}
