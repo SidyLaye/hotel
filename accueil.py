@@ -7,11 +7,18 @@ class MenuExample(Gtk.Window):
 
     def __init__(self):
         Gtk.Window.__init__(self, title="ACCUEIL HOTEL")
+        self.override_background_color(0, Gdk.RGBA(0.7,0.7,2.5,1))
+         
+         
         
+     #    image = Gtk.Image()
+     #    image.set_from_file("imhotel.jpg")
+     #    self.add(image)
         
+
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(vbox)
-
+        
 
         titre = Gtk.Label()
         titre.set_text("Bienvenue dans votre espace hôtel !")
@@ -26,13 +33,9 @@ class MenuExample(Gtk.Window):
         self.add(menubar)
 
 
-        css_provider = Gtk.CssProvider()
-        css = """
-            
-        """
-        screen = Gdk.Screen.get_default()
-        style_context = Gtk.StyleContext()
-        style_context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+     #    screen = Gdk.Screen.get_default()
+     #    style_context = Gtk.StyleContext()
+     #    style_context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
 
         # Création d'un élément de menu "Information" avec des sous-options

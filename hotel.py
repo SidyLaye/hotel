@@ -7,12 +7,16 @@ class Form(Gtk.Window):
 
     def __init__(self):
         Gtk.Window.__init__(self, title="Hotellerie")
+        self.override_background_color(0, Gdk.RGBA(0.7,0.7,2.5,1))
+
+
 
         # Créer une grille pour les champs de texte
         grid = Gtk.Grid()
         grid.set_column_spacing(30)
         grid.set_row_spacing(30)
         self.add(grid)
+        
 
 
         css_provider = Gtk.CssProvider()
@@ -49,6 +53,8 @@ class Form(Gtk.Window):
         grid_container.pack_start(grid, False, False, 0)
         self.add(grid_container)
 
+
+
         # Champ de texte pour le nom
         name = Gtk.Label(label="Nom:")
         grid.attach(name, 0, 0, 1, 1)
@@ -84,21 +90,7 @@ class Form(Gtk.Window):
         import subprocess
         subprocess.call(["python", "accueil.py"])
 
-        fixed = Gtk.fixed()
-
-
-        image= Gtk.Image.new_from_file("C:/msys64/home/hp/imhotel.jpg")
-
-
-        image.set_size_request(800,600)
-        fixed.put(image, 0, 0)
-        self.add(fixed)
-
-
-        
-        # image = Gtk.image()
-        # pixbuf = GdkPixbuf.Pixbuf.new_from_file("C:/msys64/home/hp/imhotel.jpg")
-        # image.set_from_pixbuf(pixbuf)
+       
 
 
 win = Form()
